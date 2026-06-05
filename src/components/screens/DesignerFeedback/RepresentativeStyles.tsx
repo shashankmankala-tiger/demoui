@@ -103,13 +103,15 @@ export function RepresentativeStyles() {
               >
                 {/* Image */}
                 <div
-                  className="relative w-full h-[150px] bg-white rounded-[12px] overflow-hidden border border-[var(--line)] grid place-items-center cursor-pointer group/img"
+                  className="relative w-full bg-white rounded-[12px] overflow-hidden border border-[var(--line)] flex items-center justify-center cursor-pointer group/img"
+                  style={{ minHeight: 200 }}
                   onClick={() => peer.image_url ? setModalImage(peer.image_url) : undefined}
                 >
                   <img
                     src={peer.image_url || sketchUrl(peer.style_number)}
                     alt={`style ${peer.style_number}`}
-                    className="w-full h-full object-contain p-[10px]"
+                    className="w-full object-contain p-[10px]"
+                    style={{ maxHeight: 260 }}
                     loading="lazy"
                     onError={(e) => {
                       const parent = (e.target as HTMLElement).parentElement;
@@ -117,16 +119,11 @@ export function RepresentativeStyles() {
                     }}
                   />
                   {peer.image_url && (
-                    <button
-                      onClick={(e) => { e.stopPropagation(); setModalImage(peer.image_url); }}
-                      className="absolute bottom-2 right-2 w-6 h-6 rounded-full bg-black/40 flex items-center justify-center opacity-0 group-hover/img:opacity-100 transition-opacity"
-                      aria-label="Expand image"
-                    >
-                      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="5" cy="5" r="3.5" stroke="white" strokeWidth="1.2"/>
-                        <line x1="7.8" y1="7.8" x2="10.5" y2="10.5" stroke="white" strokeWidth="1.2" strokeLinecap="round"/>
-                      </svg>
-                    </button>
+                    <div className="absolute inset-0 bg-black/0 group-hover/img:bg-black/5 transition-colors flex items-center justify-center">
+                      <span className="opacity-0 group-hover/img:opacity-100 transition-opacity bg-white/90 text-[11px] font-semibold text-[var(--navy)] px-3 py-1.5 rounded-full shadow text-center">
+                        Click to expand
+                      </span>
+                    </div>
                   )}
                 </div>
 

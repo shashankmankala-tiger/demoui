@@ -14,7 +14,7 @@ export interface StagedFile {
 
 export const TOPN_MIN = 1;
 export const TOPN_MAX = 20;
-export const TOPN_DEFAULT = 4;
+export const TOPN_DEFAULT = 6;
 
 // ── DropZone ──────────────────────────────────────────────────────────────────
 

@@ -18,6 +18,7 @@ import { predictStyle } from "@/services/predict.service";
 import { mapApiResponse } from "@/lib/mapApiResponse";
 import { useAppStore } from "@/store/useAppStore";
 import { APP_CONFIG } from "@/config/app.config";
+import { ocrSketchId } from "@/lib/ocrSketchId";
 import type { AnalyzeStep } from "@/types/app.types";
 
 const sleep = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
@@ -28,14 +29,14 @@ const sleep = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
 // fixed 700 ms pause explicitly after Promise.all settles.
 
 // DEMO: instant for development — restore TIMING_NO_RD1 values before client demo
-const TIMING_NO_RD1: Array<{ step: AnalyzeStep; ms: number }> = [
+const TIMING_NO_RD: Array<{ step: AnalyzeStep; ms: number }> = [
   { step: "uploading",   ms: 1 },
   { step: "classifying", ms: 1 },
   { step: "extracting",  ms: 1 },
   { step: "costing",     ms: 0 },
 ];
 
-const TIMING_NO_RD: Array<{ step: AnalyzeStep; ms: number }> = [
+const TIMING_NO_RD1: Array<{ step: AnalyzeStep; ms: number }> = [
   { step: "uploading",   ms: 1_500 },
   { step: "classifying", ms: 10_000 }, // Gemini LLM extraction
   { step: "extracting",  ms: 4_000 },  // hierarchical classifier
@@ -118,9 +119,11 @@ export function usePredict() {
       setPredictionError(null);
       setSketchDataUrl(imageDataUrl);
 
+      // OCR the top strip to extract the style ID — runs before the API call
+      const sketchId = (await ocrSketchId(imageDataUrl).catch(() => null)) ?? undefined;
+
       // AbortController — cancelled on timeout or external reset
       const controller = new AbortController();
-      // Hard safety timeout: slightly above the API's own 90 s ceiling
       const timeoutId = setTimeout(
         () => controller.abort(new DOMException("Request timed out", "AbortError")),
         APP_CONFIG.api.timeout + 5_000
@@ -130,7 +133,7 @@ export function usePredict() {
       const timing = hasRd ? TIMING_WITH_RD : TIMING_NO_RD;
 
       try {
-        const apiPromise = predictStyle(imageDataUrl, rdNumber, isGraphics, topN, controller.signal);
+        const apiPromise = predictStyle(imageDataUrl, rdNumber, isGraphics, topN, controller.signal, sketchId);
 
         // Settle promise used to release the animation hold at "costing"
         const settle = apiPromise.then(

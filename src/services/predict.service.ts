@@ -21,14 +21,15 @@ export async function predictStyle(
   rdNumber?: string | null,
   isGraphics = false,
   topn = 6,
-  signal?: AbortSignal
+  signal?: AbortSignal,
+  sketchId?: string
 ): Promise<PredictFullResponse> {
   // Strip the data URI prefix — API expects raw base64 only
   const base64 = imageDataUrl.replace(/^data:[^;]+;base64,/, "");
 
   const rdEntry = rdNumber ? [rdNumber] : [null];
 
-  const requestBody: PredictFullRequest = {
+  const requestBody = {
     base_encodings: [base64],
     rd_numbers: [rdEntry],
     topn,
@@ -36,7 +37,8 @@ export async function predictStyle(
     include_similarity: true,
     is_graphics: [isGraphics],
     should_normalise_image: true,
-  };
+    ...(sketchId ? { _sketchId: sketchId } : {}),
+  } as PredictFullRequest;
 
   // Route through the local Next.js proxy (/api/predict) so the server-side
   // fetch handles the internal TLS certificate instead of the browser.

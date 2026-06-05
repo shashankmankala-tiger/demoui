@@ -28,14 +28,14 @@ const sleep = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
 // fixed 700 ms pause explicitly after Promise.all settles.
 
 // DEMO: instant for development — restore TIMING_NO_RD1 values before client demo
-const TIMING_NO_RD: Array<{ step: AnalyzeStep; ms: number }> = [
+const TIMING_NO_RD1: Array<{ step: AnalyzeStep; ms: number }> = [
   { step: "uploading",   ms: 1 },
   { step: "classifying", ms: 1 },
   { step: "extracting",  ms: 1 },
   { step: "costing",     ms: 0 },
 ];
 
-const TIMING_NO_RD1: Array<{ step: AnalyzeStep; ms: number }> = [
+const TIMING_NO_RD: Array<{ step: AnalyzeStep; ms: number }> = [
   { step: "uploading",   ms: 1_500 },
   { step: "classifying", ms: 10_000 }, // Gemini LLM extraction
   { step: "extracting",  ms: 4_000 },  // hierarchical classifier

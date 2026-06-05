@@ -5,17 +5,28 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import type { FeedbackPredictRequest, FeedbackPredictResponse } from "@/types/api.types";
-import { DEMO_SHAP, DEMO_BASE_COST, DEMO_CATEGORY_BASELINE } from "@/config/demoShap";
+import { DEMO_SHAP, DEMO_BASE_COSTS, DEMO_CATEGORY_BASELINES, DEMO_BASE_COST, DEMO_CATEGORY_BASELINE } from "@/config/demoShap";
 
-const DEMO_SIMILAR_IMAGES = ["/sketch2.jpg", "/sketch3.jpg", "/sketch4.jpg", "/sketch5.jpg"];
-const DEMO_SIMILAR_COSTS  = [6.80, 7.45, 7.10, 6.95];
+const DEMO_SIMILAR_IMAGES = [
+  "/new_set/sketch1_similar1_normalized.jpg",
+  "/new_set/sketch1_similar2_normalized.jpg",
+  "/new_set/sketch1_similar3_normalized.jpg",
+  "/new_set/sketch1_similar4_normalized.png",
+  "/new_set/sketch1_similar5_normalized.jpg",
+  "/new_set/sketch1_similar6_normalized.jpg",
+];
+const DEMO_SIMILAR_COSTS   = [9.50, 11.58, 11.70, 5.91, 10.30, 13.27];
+const DEMO_SIMILAR_SCORES  = [0.99, 0.98, 0.95, 0.90, 0.89, 0.87];
+const DEMO_SIMILAR_IDS     = ["SK-579868", "SK-705705", "SK-863612", "SK-863613", "SK-485133", "SK-705471"];
 
 export async function POST(req: NextRequest) {
   const body = (await req.json()) as FeedbackPredictRequest;
 
-  const dept = body.department ?? "WOMENS FLEECE";
+  const dept = body.department ?? "W DRESSES & SKIRTS";
   const attrs = body.attributes ?? {};
   const deptShap = DEMO_SHAP[dept] ?? {};
+  const baseCost = DEMO_BASE_COSTS[dept] ?? DEMO_BASE_COST;
+  const categoryBaseline = DEMO_CATEGORY_BASELINES[dept] ?? DEMO_CATEGORY_BASELINE;
 
   // Sum SHAP impacts for all current attribute values
   let shapSum = 0;
@@ -27,18 +38,18 @@ export async function POST(req: NextRequest) {
     shapSum += impact;
   }
 
-  const newCost = Math.round((DEMO_BASE_COST + shapSum) * 100) / 100;
+  const newCost = Math.round((baseCost + shapSum) * 100) / 100;
 
   const demo: FeedbackPredictResponse = {
     cost:                   newCost,
     cost_explanation:       null,
-    baseline:               DEMO_CATEGORY_BASELINE,
-    pred_class_1:           "JACKET",
-    pred_subclass_1:        "BOMBER",
-    class_top3:             ["JACKET", "VEST", "HOODIE"],
-    subclass_top3:          ["BOMBER", "TRACK JACKET", "WINDBREAKER"],
-    similarity_scores:      [0.94, 0.91, 0.88, 0.85],
-    sketch_ids:             ["SK-002", "SK-003", "SK-004", "SK-005"],
+    baseline:               categoryBaseline,
+    pred_class_1:           "SS DRESSES",
+    pred_subclass_1:        "SHIFT",
+    class_top3:             ["SS DRESSES", "LS DRESSES", "SKIRTS"],
+    subclass_top3:          ["SHIFT", "SWING", "SHEATH"],
+    similarity_scores:      DEMO_SIMILAR_SCORES,
+    sketch_ids:             DEMO_SIMILAR_IDS,
     similar_base_encodings: DEMO_SIMILAR_IMAGES,
     match_costs:            DEMO_SIMILAR_COSTS,
     classifier_error:       null,

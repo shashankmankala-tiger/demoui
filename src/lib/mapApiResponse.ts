@@ -18,9 +18,10 @@ import { DEMO_SHAP } from "@/config/demoShap";
 
 /**
  * Builds a flat Driver array from llm_attributes.
- * SHAP values are unavailable from the full-predict endpoint, so all are 0.
+ * shap is kept 0 so recomputeCost never updates finalCost on attribute changes.
+ * Δ COST deltas are computed in the UI by comparing shapLookup values directly.
  */
-function buildDrivers(llmAttrs: Record<string, unknown>): Driver[] {
+function buildDrivers(llmAttrs: Record<string, unknown>, _dept: string): Driver[] {
   return Object.entries(llmAttrs)
     .map(([rawKey, value]) => ({ key: normalizeAttrKey(rawKey), value }))
     .filter(({ key }) => VALID_ATTR_KEYS.has(key))
@@ -117,7 +118,7 @@ export function mapApiResponse(response: PredictFullResponse): {
   const llmAttrs = item.llm_attributes ?? {};
   const dept = meta.predicted_department ?? "";
 
-  const drivers = buildDrivers(llmAttrs);
+  const drivers = buildDrivers(llmAttrs, dept);
   const groups = buildGroups(drivers);
 
   // errors object replaced the flat cost_error / similarity_error / error fields
@@ -168,7 +169,7 @@ export function mapApiResponse(response: PredictFullResponse): {
   const metadata: MetadataBundle = {
     deptBaseline: { [dept]: record.y_pred },
     deptFeatures: { [dept]: nonSummaryKeys },
-    shapLookup: DEMO_SHAP[dept] ? { [dept]: DEMO_SHAP[dept] } : {},
+    shapLookup: DEMO_SHAP[dept] ? { [dept]: DEMO_SHAP[dept] } : (DEMO_SHAP["WOMENS FLEECE"] ? { "WOMENS FLEECE": DEMO_SHAP["WOMENS FLEECE"] } : {}),
     peerPool,
   };
 

@@ -250,8 +250,9 @@ export function AttributesPanel() {
               const allOpts = isNaAttr ? [] : [...new Set([currentValue, ...yamlOpts])];
 
               const shapValues = metadata?.shapLookup?.[department]?.[driver.feature]?.values;
+              const originalShap = shapValues ? (shapValues[driver.value_display] ?? 0) : 0;
               const delta = hasShapData && isOverridden && shapValues
-                ? (shapValues[currentValue] ?? driver.shap) - driver.shap
+                ? (shapValues[currentValue] ?? originalShap) - originalShap
                 : 0;
 
               return (

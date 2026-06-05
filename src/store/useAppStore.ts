@@ -208,7 +208,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   setAttributeOverride: (feature, value) => {
     const overrides = { ...get().attributeOverrides, [feature]: value };
     set({ attributeOverrides: overrides });
-    recomputeCost(set, get, overrides);
+    // Cost only updates via Re-estimate button — not on individual attribute changes.
   },
 
   clearAttributeOverrides: () => {

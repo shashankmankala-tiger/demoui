@@ -42,9 +42,9 @@ function sketch1Response(hasRd: boolean): PredictFullResponse {
         panels_count: 10, seam_count: 14, pockets_count: 0,
       },
       cost_explanation: {
-        predicted_cost: cost, category_baseline: 9.03,
-        deviation: Math.abs(Math.round((cost - 9.03) * 100) / 100),
-        direction: cost >= 9.03 ? "above" : "below", coverage_pct: 91.0,
+        predicted_cost: cost, category_baseline: 8.70,
+        deviation: Math.abs(Math.round((cost - 8.70) * 100) / 100),
+        direction: cost >= 8.70 ? "above" : "below", coverage_pct: 91.0,
         drivers: [
           { group: "Garment Shape & Fit", net_impact: -0.32, features: [
             { name: "waist_type", display_name: "Waist Type", impact: -0.18 },

@@ -127,12 +127,12 @@ export const DEMO_SHAP: ShapLookup = {
 // Calibrated so the default demo attributes sum back to the predicted cost.
 export const DEMO_BASE_COSTS: Record<string, number> = {
   "WOMENS FLEECE":      6.72,  // default attrs: sleeves(+0.15)+neck(+0.12)+pockets(+0.25)=+0.52 → 6.72+0.52=7.24
-  "W DRESSES & SKIRTS": 8.89,  // default attrs: neck "Collared neck"(+0.14) → 8.89+0.14=9.03
+  "W DRESSES & SKIRTS": 8.89,  // default attrs: neck "Collared neck"(+0.14) → 8.89+0.14=9.03 (predicted); category baseline is 8.70
 };
 
 export const DEMO_CATEGORY_BASELINES: Record<string, number> = {
-  "WOMENS FLEECE":     6.90,
-  "W DRESSES & SKIRTS": 9.03,
+  "WOMENS FLEECE":      6.90,
+  "W DRESSES & SKIRTS": 8.70,
 };
 
 // Fallbacks
